@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"strconv"
 	"strings"
+	"time"
 
 	"github.com/PuerkitoBio/goquery"
 	"github.com/chutified/currencies/models"
@@ -20,7 +21,7 @@ type record struct {
 }
 
 // fetchData crawls the source website and returns the latest raw data.
-func fetchData() ([]record, error) {
+func FetchData() ([]record, error) {
 
 	// fetch the date
 	doc, err := goquery.NewDocument("https://markets.businessinsider.com/currencies")
@@ -37,8 +38,8 @@ func fetchData() ([]record, error) {
 		// select
 		name := children.First()
 		ctr := name.Next()
-		dsc := ctr.Next().Next()
-		chP := dsc.Next()
+		dsc := ctr.Next()
+		chP := dsc.Next().Next()
 		prc := chP.Next()
 		last := prc.Next()
 
@@ -46,6 +47,11 @@ func fetchData() ([]record, error) {
 		name = name.Children().First()
 		dsc = dsc.Children().First()
 		chP = chP.Children().First()
+
+		lastTemp := last.Children().Last()
+		if lastTemp.Text() != "" {
+			last = lastTemp
+		}
 
 		// trim spaces
 		n := strings.TrimSpace(name.Text())
@@ -70,17 +76,29 @@ func fetchData() ([]record, error) {
 	return records, nil
 }
 
-func parseRecords(rs []record) (map[string]models.Currency, error) {
+// parseRecords construct a map of currencies from je slice of the records.
+func ParseRecords(rs []record) (map[string]*models.Currency, error) {
 
 	// prepare cache memory
-	var cs map[string]models.Currency
+	cs := make(map[string]*models.Currency)
+
+	// add base
+	cs["USD"] = &models.Currency{
+		Name:        "USD",
+		Country:     "United States of America",
+		Description: "United States Dollar",
+		ChangeP:     0,
+		Rate:        1,
+		LastUpdate:  time.Now(),
+	}
+
 	for _, r := range rs {
 
 		// name
 		var name string
 		_, err := fmt.Sscanf(r.name, "USD/%s", &name)
 		if err != nil {
-			return nil, fmt.Errorf("unexpected name format %s", err)
+			return nil, fmt.Errorf("unexpected name format: %w", err)
 		}
 
 		// country
@@ -90,7 +108,43 @@ func parseRecords(rs []record) (map[string]models.Currency, error) {
 		description := r.description
 
 		// changeP
-		strconv.ParseFloat(r.changeP, 32)
+		chP := strings.ReplaceAll(r.changeP, ",", "")
+		changeP, err := strconv.ParseFloat(chP, 32)
+		if err != nil {
+			return nil, fmt.Errorf("unexpected change in percentage: %w", err)
+		}
+
+		// rate
+		p := strings.ReplaceAll(r.rate, ",", "")
+		rate, err := strconv.ParseFloat(p, 32)
+		if err != nil {
+			return nil, fmt.Errorf("unexpected currency rate: %w", err)
+		}
+
+		// prepare layouts
+		const timeLayout = "01/02/2006 03:04:05 PM UTC-0400"
+		const dateLayout = "1/2/2006"
+		// time
+		lastUpdate, err := time.Parse(timeLayout, r.lastUpdate)
+		if err != nil {
+
+			// date
+			lastUpdate, err = time.Parse(dateLayout, r.lastUpdate)
+			if err != nil {
+				return nil, fmt.Errorf("unexpected time layout: %w", err)
+			}
+		}
+
+		// construct
+		item := &models.Currency{
+			Name:        name,
+			Country:     country,
+			Description: description,
+			ChangeP:     float32(changeP),
+			Rate:        float32(rate),
+			LastUpdate:  lastUpdate,
+		}
+		cs[item.Name] = item
 	}
 
 	return cs, nil
