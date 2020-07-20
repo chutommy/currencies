@@ -18,6 +18,19 @@ func New() *DataService {
 	}
 }
 
+// GetCurrency retieves data from the cache memory.
+func (ds *DataService) GetCurrency(name string) (*models.Currency, error) {
+
+	// search
+	c, ok := ds.currencies[name]
+	if !ok {
+		return nil, fmt.Errorf("currency '%s' not found", name)
+	}
+
+	// success
+	return c, nil
+}
+
 // Update updates the currencies data.
 func (ds *DataService) Update() error {
 
