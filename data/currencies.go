@@ -2,27 +2,29 @@ package data
 
 import (
 	"fmt"
+	"reflect"
+	"time"
 
 	"github.com/chutified/currencies/models"
 )
 
-// DataService defines the data fetched from the website source.
-type DataService struct {
-	currencies map[string]*models.Currency
+// Service defines the data fetched from the website source.
+type Service struct {
+	Currencies map[string]*models.Currency
 }
 
 // New constructs a new data service.
-func New() *DataService {
-	return &DataService{
-		currencies: make(map[string]*models.Currency),
+func New() *Service {
+	return &Service{
+		Currencies: make(map[string]*models.Currency),
 	}
 }
 
 // GetCurrency retieves data from the cache memory.
-func (ds *DataService) GetCurrency(name string) (*models.Currency, error) {
+func (ds *Service) GetCurrency(name string) (*models.Currency, error) {
 
 	// search
-	c, ok := ds.currencies[name]
+	c, ok := ds.Currencies[name]
 	if !ok {
 		return nil, fmt.Errorf("currency '%s' not found", name)
 	}
@@ -31,8 +33,8 @@ func (ds *DataService) GetCurrency(name string) (*models.Currency, error) {
 	return c, nil
 }
 
-// Update updates the currencies data.
-func (ds *DataService) Update() error {
+// Update updates the Currencies data.
+func (ds *Service) Update() error {
 
 	// get data
 	rs, err := fetchData()
@@ -45,6 +47,37 @@ func (ds *DataService) Update() error {
 	}
 
 	// success
-	ds.currencies = m
+	ds.Currencies = m
 	return nil
+}
+
+// MonitorData monitors the updates and whenever new values are pulled, it sends a signal through the channel.
+func (ds *Service) MonitorData(interval time.Duration) (chan struct{}, chan error) {
+
+	// prepare channels
+	update := make(chan struct{})
+	errs := make(chan error)
+
+	go func() {
+		ticker := time.Tick(interval)
+		for range ticker {
+
+			// prepare maps
+			cache := ds.Currencies
+			err := ds.Update()
+			if err != nil {
+				errs <- fmt.Errorf("update currencies: %w", err)
+				continue
+			}
+
+			// compare
+			if !reflect.DeepEqual(ds.Currencies, cache) {
+
+				// update
+				update <- struct{}{}
+			}
+		}
+	}()
+
+	return update, errs
 }
