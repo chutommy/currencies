@@ -21,7 +21,7 @@ type record struct {
 }
 
 // fetchData crawls the source website and returns the latest raw data.
-func FetchData() ([]record, error) {
+func fetchData() ([]record, error) {
 
 	// fetch the date
 	doc, err := goquery.NewDocument("https://markets.businessinsider.com/currencies")
@@ -77,7 +77,7 @@ func FetchData() ([]record, error) {
 }
 
 // parseRecords construct a map of currencies from je slice of the records.
-func ParseRecords(rs []record) (map[string]*models.Currency, error) {
+func parseRecords(rs []record) (map[string]*models.Currency, error) {
 
 	// prepare cache memory
 	cs := make(map[string]*models.Currency)
