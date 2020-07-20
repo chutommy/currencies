@@ -2,6 +2,7 @@ package data
 
 import (
 	"fmt"
+	"math"
 	"reflect"
 	"time"
 
@@ -20,7 +21,7 @@ func New() *Service {
 	}
 }
 
-// GetCurrency retieves data from the cache memory.
+// GetCurrency retieves data structure from the cache memory.
 func (ds *Service) GetCurrency(name string) (*models.Currency, error) {
 
 	// search
@@ -31,6 +32,26 @@ func (ds *Service) GetCurrency(name string) (*models.Currency, error) {
 
 	// success
 	return c, nil
+}
+
+// GetRate returns the exchange rate between base and destination currency.
+func (ds *Service) GetRate(base string, dest string) (float32, error) {
+
+	// search
+	b, ok := ds.Currencies[base]
+	if !ok {
+		return 0, fmt.Errorf("base currency '%s' not found", base)
+	}
+	d, ok := ds.Currencies[dest]
+	if !ok {
+		return 0, fmt.Errorf("destination currency '%s' not found", dest)
+	}
+
+	// result
+	rate := d.Rate / b.Rate
+	// round
+	rate = float32(math.Round(float64(rate*10000)) / 10000)
+	return rate, nil
 }
 
 // Update updates the Currencies data.
