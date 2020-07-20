@@ -1,6 +1,7 @@
 package server
 
 import (
+	"context"
 	"log"
 	"time"
 
@@ -18,8 +19,16 @@ func New(log *log.Logger, ds *data.Service) *Currency {
 		ds:  ds,
 	}
 
+	go func() {
+		c.handleUpdates()
+	}()
+
 	return c
 }
+
+func (c *Currency) GetCurrency(ctx context.Context, req *GetCurrencyRequest) (*GetCurrencyResponse, error) {
+}
+func (c *Currency) GetRate(ctx context.Context, req *GetRateRequest) (*GetRateResponse, error) {}
 
 func (c *Currency) handleUpdates() {
 
