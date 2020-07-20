@@ -1,10 +1,13 @@
 package models
 
+import "time"
+
+// Currency is a base structure of the currency.
 type Currency struct {
 	Name        string
 	Country     string
 	Description string
-	ChangeP     int
-	Rate        float64
-	LastUpdate  int64
+	ChangeP     float32
+	Rate        float32
+	LastUpdate  time.Time
 }
