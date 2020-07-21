@@ -6,6 +6,7 @@ import (
 	"net"
 	"os"
 
+	"github.com/chutified/currencies/config"
 	data "github.com/chutified/currencies/data"
 	currency "github.com/chutified/currencies/protos/currency"
 	server "github.com/chutified/currencies/server"
@@ -17,9 +18,16 @@ func main() {
 
 	log := log.New(os.Stdin, "[CURRENCY SERVICE]", log.LstdFlags)
 
+	// configuration
+	cfg, err := config.GetConfig("config.yaml")
+	if err != nil {
+		log.Fatalf("[error] could not find config file: %v", err)
+	}
+	var addr = fmt.Sprintf("%s:%d", cfg.Host, cfg.Port)
+
 	// data service
 	ds := data.New()
-	err := ds.Update()
+	err = ds.Update()
 	if err != nil {
 		log.Fatalf("[error] could not update data: %v", err)
 	}
@@ -31,15 +39,14 @@ func main() {
 	currency.RegisterCurrencyServer(gs, cs)
 	reflection.Register(gs)
 
-	var root = fmt.Sprintf("%s:%d", "localhost", 10502)
-	listen, err := net.Listen("tcp", root)
+	listen, err := net.Listen("tcp", addr)
 	if err != nil {
-		log.Fatalf("[error] listening on %s: %v", root, err)
+		log.Fatalf("[error] listening on %s: %v", addr, err)
 	}
 
-	log.Printf("[start] listening on %s", root)
+	log.Printf("[start] listening on %s", addr)
 	err = gs.Serve(listen)
 	if err != nil {
-		panic(err)
+		log.Panicf("[error] running server: %v", err)
 	}
 }
