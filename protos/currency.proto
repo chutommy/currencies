@@ -8,24 +8,24 @@ service Currency {
 }
 
 message GetCurrencyRequest {
-    string name = 1;
+    string Name = 1;
 }
 
 message GetCurrencyResponse {
-   string name = 1;
-   string country = 2;
-   string description = 3;
-   float change = 4;
-   float rateUSD = 5;
-   string updatedAt = 6;
+   string Name = 1;
+   string Country = 2;
+   string Description = 3;
+   float Change = 4;
+   float RateUSD = 5;
+   string UpdatedAt = 6;
 }
 
 
 message GetRateRequest {
-    string base = 1;
-    string destination = 2;
+    string Base = 1;
+    string Destination = 2;
 }
 
 message GetRateResponse {
-    float rate = 1;
+    float Rate = 1;
 }
