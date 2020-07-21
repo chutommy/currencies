@@ -39,6 +39,7 @@ func (c *Currency) GetCurrency(ctx context.Context, req *currency.GetCurrencyReq
 		return nil, err
 	}
 	// success
+	c.log.Printf("[handle] GetCurrency call: %s", req.GetName())
 	return resp, nil
 }
 
@@ -51,6 +52,7 @@ func (c *Currency) GetRate(ctx context.Context, req *currency.GetRateRequest) (*
 		return nil, err
 	}
 	// success
+	c.log.Printf("[handle] GetRate call, base: %s, destination: %s", req.GetBase(), req.GetDestination())
 	return resp, nil
 }
 
@@ -67,6 +69,7 @@ func (c *Currency) handleUpdates() {
 
 	// update
 	for range updates {
+		c.log.Printf("[update] currency data updated")
 
 		// TODO
 		// data got updated
