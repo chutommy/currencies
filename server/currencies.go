@@ -6,6 +6,7 @@ import (
 	"time"
 
 	"github.com/chutified/currencies/data"
+	"github.com/chutified/currencies/protos/currency"
 )
 
 type Currency struct {
@@ -26,9 +27,19 @@ func New(log *log.Logger, ds *data.Service) *Currency {
 	return c
 }
 
-func (c *Currency) GetCurrency(ctx context.Context, req *GetCurrencyRequest) (*GetCurrencyResponse, error) {
+func (c *Currency) GetCurrency(ctx context.Context, req *currency.GetCurrencyRequest) (*currency.GetCurrencyResponse, error) {
+
+	// handle
+	resp, err := c.handleGetCurrencyRequest(req)
+	if err != nil {
+		return nil, err
+	}
+	// success
+	return resp, nil
 }
-func (c *Currency) GetRate(ctx context.Context, req *GetRateRequest) (*GetRateResponse, error) {}
+
+// func (c *Currency) GetRate(ctx context.Context, req *currency.GetRateRequest) (*currency.GetRateResponse, error) {
+// }
 
 func (c *Currency) handleUpdates() {
 
