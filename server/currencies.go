@@ -5,8 +5,8 @@ import (
 	"log"
 	"time"
 
-	"github.com/chutified/currencies/data"
-	"github.com/chutified/currencies/protos/currency"
+	data "github.com/chutified/currencies/data"
+	currency "github.com/chutified/currencies/protos/currency"
 )
 
 // Currency is a server which serves the gRPC currency calls.

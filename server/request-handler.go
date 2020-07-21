@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/chutified/currencies/protos/currency"
+	currency "github.com/chutified/currencies/protos/currency"
 )
 
 func (c *Currency) handleGetCurrencyRequest(req *currency.GetCurrencyRequest) (*currency.GetCurrencyResponse, error) {
