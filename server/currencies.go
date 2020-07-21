@@ -38,8 +38,16 @@ func (c *Currency) GetCurrency(ctx context.Context, req *currency.GetCurrencyReq
 	return resp, nil
 }
 
-// func (c *Currency) GetRate(ctx context.Context, req *currency.GetRateRequest) (*currency.GetRateResponse, error) {
-// }
+func (c *Currency) GetRate(ctx context.Context, req *currency.GetRateRequest) (*currency.GetRateResponse, error) {
+
+	// handle
+	resp, err := c.handleGetRateRequest(req)
+	if err != nil {
+		return nil, err
+	}
+	// success
+	return resp, nil
+}
 
 func (c *Currency) handleUpdates() {
 

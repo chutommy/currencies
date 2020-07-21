@@ -31,3 +31,25 @@ func (c *Currency) handleGetCurrencyRequest(req *currency.GetCurrencyRequest) (*
 	}
 	return resp, nil
 }
+
+// handleGetRateRequest handles GetRate calls.
+func (c *Currency) handleGetRateRequest(req *currency.GetRateRequest) (*currency.GetRateResponse, error) {
+
+	// get values
+	base := req.GetBase()
+	dest := req.GetDestination()
+	base = strings.ToUpper(base)
+	dest = strings.ToUpper(dest)
+
+	// retrieve data
+	rate, err := c.ds.GetRate(base, dest)
+	if err != nil {
+		return nil, fmt.Errorf("call GetRate: %w", err)
+	}
+
+	// success
+	resp := &currency.GetRateResponse{
+		Rate: rate,
+	}
+	return resp, nil
+}
