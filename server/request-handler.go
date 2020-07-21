@@ -7,7 +7,6 @@ import (
 	"github.com/chutified/currencies/protos/currency"
 )
 
-// handleGetCurrencyRequest handles request for the GetCurrecy calls.
 func (c *Currency) handleGetCurrencyRequest(req *currency.GetCurrencyRequest) (*currency.GetCurrencyResponse, error) {
 
 	// get name
@@ -32,7 +31,6 @@ func (c *Currency) handleGetCurrencyRequest(req *currency.GetCurrencyRequest) (*
 	return resp, nil
 }
 
-// handleGetRateRequest handles GetRate calls.
 func (c *Currency) handleGetRateRequest(req *currency.GetRateRequest) (*currency.GetRateResponse, error) {
 
 	// get values
