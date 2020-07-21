@@ -100,6 +100,7 @@ func parseRecords(rs []record) (map[string]*models.Currency, error) {
 		if err != nil {
 			return nil, fmt.Errorf("unexpected name format: %w", err)
 		}
+		name = strings.ToUpper(name)
 
 		// country
 		country := r.country
