@@ -2,7 +2,6 @@ package server
 
 import (
 	"context"
-	"errors"
 	"fmt"
 	"io"
 	"log"
@@ -11,6 +10,8 @@ import (
 
 	data "github.com/chutified/currencies/data"
 	currency "github.com/chutified/currencies/protos/currency"
+	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/status"
 )
 
 // Currency is a server which serves the gRPC currency calls.
@@ -45,7 +46,19 @@ func (c *Currency) GetCurrency(ctx context.Context, req *currency.GetCurrencyReq
 	// handle
 	resp, err := c.handleGetCurrencyRequest(req)
 	if err != nil {
-		return nil, err
+		c.log.Printf("[error] handle error: %v", err)
+
+		// defines gRPC error
+		gErr := status.Newf(
+			codes.NotFound,
+			"Currency \"%s\" was not found.", req.GetName(),
+		)
+		gErr, wde := gErr.WithDetails(req)
+		if wde != nil {
+			c.log.Printf("[error] unexpected 'with details' fail: %v", wde)
+		}
+
+		return nil, gErr.Err()
 	}
 	// success
 	c.log.Printf("[handle] GetCurrency call: %s", req.GetName())
@@ -58,8 +71,21 @@ func (c *Currency) GetRate(ctx context.Context, req *currency.GetRateRequest) (*
 	// handle
 	resp, err := c.handleGetRateRequest(req)
 	if err != nil {
-		return nil, err
+		c.log.Printf("[error] handle error: %v", err)
+
+		// defines gRPC error
+		gErr := status.Newf(
+			codes.NotFound,
+			"Currency was not found: %v.", err,
+		)
+		gErr, wde := gErr.WithDetails(req)
+		if wde != nil {
+			c.log.Printf("[error] unexpected 'with details' fail: %v", wde)
+		}
+
+		return nil, gErr.Err()
 	}
+
 	// success
 	c.log.Printf("[handle] GetRate call, base: %s, destination: %s", req.GetBase(), req.GetDestination())
 	return resp, nil
@@ -84,9 +110,28 @@ func (c *Currency) SubscribeCurrency(srv currency.Currency_SubscribeCurrencyServ
 
 		// validate request
 		if _, ok := c.ds.Currencies[name]; !ok {
-			c.log.Printf("[error] currency %v not found", name)
+			c.log.Printf("[error] currency \"%s\" not found", name)
 
-			// TODO handle error the grpc way
+			// defines gRPC error
+			gErr := status.Newf(
+				codes.NotFound,
+				"Currency \"%s\" was not found.", name,
+			)
+			gErr, wde := gErr.WithDetails(req)
+			if wde != nil {
+				c.log.Printf("[error] unexpected 'with details' fail: %v", wde)
+			}
+
+			// send error message
+			err = srv.Send(&currency.StreamingSubscribeResponse{
+				Message: &currency.StreamingSubscribeResponse_Error{
+					Error: gErr.Proto(),
+				},
+			})
+			if err != nil {
+				c.log.Printf("[error] failed to send response: %v", err)
+			}
+
 			continue
 		}
 
@@ -97,19 +142,37 @@ func (c *Currency) SubscribeCurrency(srv currency.Currency_SubscribeCurrencyServ
 		}
 
 		// check duplicates
-		var validErr error
+		var validErr *status.Status
 		for _, r := range reqs {
 			if r.GetName() == name {
 				c.log.Printf("[error] the client has been already subscribed to %s", r.GetName())
 
-				// TODO handle error the grpc way
-				validErr = errors.New("valid err")
+				// defines gRPC error
+				validErr = status.Newf(
+					codes.Canceled,
+					"This client has already subscribed to the \"%s\".", name,
+				)
+				var wde error
+				validErr, wde = validErr.WithDetails(req)
+				if wde != nil {
+					c.log.Printf("[error] unexpected 'with details' fail: %v", wde)
+				}
 				break
 			}
 		}
+		// if validErr exists returns error and continue
 		if validErr != nil {
 
-			// TODO handle error the grpc way
+			// send error message
+			err := srv.Send(&currency.StreamingSubscribeResponse{
+				Message: &currency.StreamingSubscribeResponse_Error{
+					Error: validErr.Proto(),
+				},
+			})
+			if err != nil {
+				c.log.Printf("[error] failed to send response: %v", err)
+			}
+
 			continue
 		}
 
@@ -148,7 +211,26 @@ func (c *Currency) handleUpdates() {
 				if err != nil {
 					c.log.Printf("[error] unexpected request handle error: %v", err)
 
-					// TODO handle error grpc
+					// defines gRPC error
+					gErr := status.Newf(
+						codes.NotFound,
+						"Currency \"%s\" was not found.", req.GetName(),
+					)
+					gErr, wde := gErr.WithDetails(req)
+					if wde != nil {
+						c.log.Printf("[error] unexpected 'with details' fail: %v", wde)
+					}
+
+					// send error message
+					err = srv.Send(&currency.StreamingSubscribeResponse{
+						Message: &currency.StreamingSubscribeResponse_Error{
+							Error: gErr.Proto(),
+						},
+					})
+					if err != nil {
+						c.log.Printf("[error] failed to send response: %v", err)
+					}
+
 					continue
 				}
 
@@ -159,7 +241,8 @@ func (c *Currency) handleUpdates() {
 					},
 				})
 				if err != nil {
-					c.log.Printf("[error] send request data: %v", err)
+					c.log.Printf("[error] failed to send response: %v", err)
+
 					continue
 				}
 			}
