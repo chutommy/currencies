@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"io"
 	"log"
+	"strings"
 	"time"
 
 	data "github.com/chutified/currencies/data"
@@ -79,7 +80,7 @@ func (c *Currency) SubscribeCurrency(srv currency.Currency_SubscribeCurrencyServ
 			c.log.Printf("[error] invalid request format: %v", err)
 			return fmt.Errorf("invalid request: %w", err)
 		}
-		name := req.GetName()
+		name := strings.ToUpper(req.GetName())
 
 		// validate request
 		if _, ok := c.ds.Currencies[name]; !ok {
