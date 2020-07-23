@@ -2,6 +2,7 @@ package server
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"io"
 	"log"
@@ -65,21 +66,18 @@ func (c *Currency) GetRate(ctx context.Context, req *currency.GetRateRequest) (*
 
 // SubscribeCurrency handles SubscribeCurrency gRPC calls.
 func (c *Currency) SubscribeCurrency(srv currency.Currency_SubscribeCurrencyServer) error {
+	// handle requests
 	for {
 
 		// get request
 		req, err := srv.Recv()
 		if err == io.EOF {
 			c.log.Printf("[exit] client closed SubscribeCurrency call")
-
-			// TODO handle error the grpc way
 			break
 		}
 		if err != nil {
 			c.log.Printf("[error] invalid request format: %v", err)
-
-			// TODO handle error the grpc way
-			continue
+			return fmt.Errorf("invalid request: %w", err)
 		}
 		name := req.GetName()
 
@@ -91,27 +89,35 @@ func (c *Currency) SubscribeCurrency(srv currency.Currency_SubscribeCurrencyServ
 			continue
 		}
 
+		// create client folder if does not exit
+		reqs, ok := c.subscriptions[srv]
+		if !ok {
+			c.subscriptions[srv] = []*currency.GetCurrencyRequest{}
+		}
+
 		// check duplicates
 		var validErr error
-		for _, r := range c.subscriptions[srv] {
+		for _, r := range reqs {
 			if r.GetName() == name {
-				validErr = fmt.Errorf("the client has already subscribed to %s", r.GetName())
+				c.log.Printf("[error] the client has been already subscribed to %s", r.GetName())
 
 				// TODO handle error the grpc way
+				validErr = errors.New("valid err")
 				break
 			}
 		}
 		if validErr != nil {
-			c.log.Printf("[error] validation error: %v", err)
 
 			// TODO handle error the grpc way
 			continue
 		}
 
-		// append
+		// success, append
+		c.log.Printf("[success] client successfully subscribed to: %s", name)
 		c.subscriptions[srv] = append(c.subscriptions[srv], req)
 	}
 
+	// exit
 	return nil
 }
 
@@ -130,7 +136,13 @@ func (c *Currency) handleUpdates() {
 	for range updates {
 		c.log.Printf("[update] currency data updated")
 
-		// TODO
-		// data got updated
+		// // iterate over clients
+		// for _, clients := range c.subscriptions {
+
+		//     // iterate over subscriptions
+		//     for _, req := range clients {
+
+		//     }
+		// }
 	}
 }
