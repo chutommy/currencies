@@ -2,4 +2,4 @@
 
 source: https://markets.businessinsider.com/currencies
 
-TODO: grpc error handle, tests, docker implementation, makefile build, protofile docs
+TODO: tests, docker implementation, makefile build, protofile docs
