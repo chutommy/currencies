@@ -56,6 +56,11 @@ func (c *Currency) GetRate(ctx context.Context, req *currency.GetRateRequest) (*
 	return resp, nil
 }
 
+// SubscribeCurrency handles SubscribeCurrency gRPC calls.
+func (c *Currency) SubscribeCurrency(srv currency.Currency_SubscribeCurrencyServer) error {
+	return nil
+}
+
 func (c *Currency) handleUpdates() {
 
 	updates, errs := c.ds.MonitorData(15 * time.Second)

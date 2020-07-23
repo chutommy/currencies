@@ -1,9 +1,12 @@
 syntax="proto3";
 
+import "google/rpc/status.proto";
+
 option go_package=".;currency";
 
 service Currency {
     rpc GetCurrency (GetCurrencyRequest) returns (GetCurrencyResponse);
+    rpc SubscribeCurrency (stream GetCurrencyRequest) returns (stream StreamingSubscribeResponse);
     rpc GetRate (GetRateRequest) returns (GetRateResponse);
 }
 
@@ -18,6 +21,13 @@ message GetCurrencyResponse {
    float Change = 4;
    float RateUSD = 5;
    string UpdatedAt = 6;
+}
+
+message StreamingSubscribeResponse {
+    oneof message{
+        GetCurrencyResponse get_currency_response = 1;
+        google.rpc.Status error = 2;
+    }
 }
 
 
