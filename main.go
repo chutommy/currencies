@@ -6,7 +6,7 @@ import (
 	"net"
 	"os"
 
-	"github.com/chutified/currencies/config"
+	config "github.com/chutified/currencies/config"
 	data "github.com/chutified/currencies/data"
 	currency "github.com/chutified/currencies/protos/currency"
 	server "github.com/chutified/currencies/server"
