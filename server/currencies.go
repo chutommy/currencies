@@ -61,7 +61,7 @@ func (c *Currency) GetCurrency(ctx context.Context, req *currency.GetCurrencyReq
 		return nil, gErr.Err()
 	}
 	// success
-	c.log.Printf("[handle] GetCurrency call: %s", req.GetName())
+	c.log.Printf("[handle] GetCurrency call: %s", strings.ToUpper(req.GetName()))
 	return resp, nil
 }
 
@@ -87,7 +87,7 @@ func (c *Currency) GetRate(ctx context.Context, req *currency.GetRateRequest) (*
 	}
 
 	// success
-	c.log.Printf("[handle] GetRate call, base: %s, destination: %s", req.GetBase(), req.GetDestination())
+	c.log.Printf("[handle] GetRate call, base: %s, destination: %s", strings.ToUpper(req.GetBase()), strings.ToUpper(req.GetDestination()))
 	return resp, nil
 }
 
@@ -129,7 +129,7 @@ func (c *Currency) SubscribeCurrency(srv currency.Currency_SubscribeCurrencyServ
 				},
 			})
 			if err != nil {
-				c.log.Printf("[error] failed to send response: %v", err)
+				c.log.Printf("[error] failed to send error message: %v", err)
 			}
 
 			continue
@@ -144,8 +144,9 @@ func (c *Currency) SubscribeCurrency(srv currency.Currency_SubscribeCurrencyServ
 		// check duplicates
 		var validErr *status.Status
 		for _, r := range reqs {
-			if r.GetName() == name {
-				c.log.Printf("[error] the client has been already subscribed to %s", r.GetName())
+			rname := strings.ToUpper(r.GetName())
+			if rname == name {
+				c.log.Printf("[error] the client has been already subscribed to %s", rname)
 
 				// defines gRPC error
 				validErr = status.Newf(
