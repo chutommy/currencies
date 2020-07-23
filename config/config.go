@@ -12,8 +12,8 @@ import (
 
 // Config defines the service settings.
 type Config struct {
-	Host string `json:"Host"`
-	Port int    `json:"Port"`
+	Host string `json:"host"`
+	Port int    `json:"port"`
 }
 
 // GetConfig reads the config file and returns its configuration.
