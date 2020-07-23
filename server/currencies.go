@@ -136,13 +136,32 @@ func (c *Currency) handleUpdates() {
 	for range updates {
 		c.log.Printf("[update] currency data updated")
 
-		// // iterate over clients
-		// for _, clients := range c.subscriptions {
+		// iterate over clients
+		for srv, reqs := range c.subscriptions {
 
-		//     // iterate over subscriptions
-		//     for _, req := range clients {
+			// iterate over subscriptions
+			for _, req := range reqs {
 
-		//     }
-		// }
+				// handle request
+				resp, err := c.handleGetCurrencyRequest(req)
+				if err != nil {
+					c.log.Printf("[error] unexpected request handle error: %v", err)
+
+					// TODO handle error grpc
+					continue
+				}
+
+				// send reponse
+				err = srv.Send(&currency.StreamingSubscribeResponse{
+					Message: &currency.StreamingSubscribeResponse_GetCurrencyResponse{
+						GetCurrencyResponse: resp,
+					},
+				})
+				if err != nil {
+					c.log.Printf("[error] send request data: %v", err)
+					continue
+				}
+			}
+		}
 	}
 }
