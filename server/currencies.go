@@ -91,10 +91,19 @@ func (c *Currency) SubscribeCurrency(srv currency.Currency_SubscribeCurrencyServ
 		// get request
 		req, err := srv.Recv()
 		if err == io.EOF {
+
+			// cancel all subscriptions
+			delete(c.subscriptions, srv)
+			fmt.Println(c.subscriptions[srv])
+
 			c.log.Printf("[exit] client closed SubscribeCurrency call")
-			break
+			return nil
 		}
 		if err != nil {
+
+			// cancel all subscriptions
+			delete(c.subscriptions, srv)
+
 			c.log.Printf("[error] invalid request format: %v", err)
 			return fmt.Errorf("invalid request: %w", err)
 		}
@@ -164,7 +173,4 @@ func (c *Currency) SubscribeCurrency(srv currency.Currency_SubscribeCurrencyServ
 		c.log.Printf("[success] client successfully subscribed to: %s", name)
 		c.subscriptions[srv] = append(c.subscriptions[srv], req)
 	}
-
-	// exit
-	return nil
 }
