@@ -34,7 +34,7 @@ func New(log *log.Logger, ds *data.Service) *Currency {
 
 	// monitoring
 	go func() {
-		c.handleUpdates()
+		c.handleUpdates("https://markets.businessinsider.com/currencies")
 	}()
 
 	return c
@@ -169,9 +169,9 @@ func (c *Currency) SubscribeCurrency(srv currency.Currency_SubscribeCurrencyServ
 	return nil
 }
 
-func (c *Currency) handleUpdates() {
+func (c *Currency) handleUpdates(url string) {
 
-	updates, errs := c.ds.MonitorData(15*time.Second, "https://markets.businessinsider.com/currencies")
+	updates, errs := c.ds.MonitorData(15*time.Second, url)
 
 	// log errors
 	go func() {
