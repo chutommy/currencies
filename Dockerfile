@@ -26,6 +26,10 @@ FROM alpine:latest AS production
 # set enviroment
 ENV PORT=10502
 
+# prepare service
+RUN apk update && apk add ca-certificates
+WORKDIR /service
+
 # prepare binary
 COPY --from=builder /service/main .
 COPY --from=builder /service/config.yaml .
