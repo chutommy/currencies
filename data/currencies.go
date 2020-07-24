@@ -58,7 +58,7 @@ func (ds *Service) GetRate(base string, dest string) (float32, error) {
 func (ds *Service) Update() error {
 
 	// get data
-	rs, err := fetchData()
+	rs, err := fetchData("https://markets.businessinsider.com/currencies")
 	if err != nil {
 		return fmt.Errorf("fetching data: %w", err)
 	}

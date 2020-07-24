@@ -21,10 +21,10 @@ type record struct {
 }
 
 // fetchData crawls the source website and returns the latest raw data.
-func fetchData() ([]record, error) {
+func fetchData(url string) ([]record, error) {
 
 	// fetch the date
-	doc, err := goquery.NewDocument("https://markets.businessinsider.com/currencies")
+	doc, err := goquery.NewDocument(url)
 	if err != nil {
 		return nil, fmt.Errorf("fetch source website: %w", err)
 	}
