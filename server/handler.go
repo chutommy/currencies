@@ -55,9 +55,9 @@ func (c *Currency) handleGetRateRequest(req *currency.GetRateRequest) (*currency
 	return resp, nil
 }
 
-func (c *Currency) handleUpdates(url string) {
+func (c *Currency) handleUpdates(interval time.Duration, url string) {
 
-	updates, errs := c.ds.MonitorData(15*time.Second, url)
+	updates, errs := c.ds.MonitorData(interval, url)
 
 	// log errors
 	go func() {

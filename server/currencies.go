@@ -6,6 +6,7 @@ import (
 	"io"
 	"log"
 	"strings"
+	"time"
 
 	data "github.com/chutified/currencies/data"
 	currency "github.com/chutified/currencies/protos/currency"
@@ -33,7 +34,7 @@ func New(log *log.Logger, ds *data.Service) *Currency {
 
 	// monitoring
 	go func() {
-		c.handleUpdates("https://markets.businessinsider.com/currencies")
+		c.handleUpdates(15*time.Second, "https://markets.businessinsider.com/currencies")
 	}()
 
 	return c
