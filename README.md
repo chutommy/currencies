@@ -292,6 +292,44 @@ $ make run                    # initialize service
     </tr>
 </table>
 
-source: 
+**Note:**
+*The Currency request holds the key "Name" and its value is **not** case sensitive.*
+*Currency names must not be completely lowercase nor uppercase to be found.*
 
-TODO: documentation
+
+## Directory structure
+```bash
+_
+├── config
+│   ├── tests
+│   │   ├── config_0.yaml
+│   │   └── config_1.yaml
+│   ├── config.go
+│   └── config_test.go
+├── data
+│   ├── currencies.go
+│   ├── currencies_test.go
+│   ├── fetching.go
+│   └── fetching_test.go
+├── models
+│   └── currency.go
+├── protos
+│   ├── currency
+│   │   └── currency.pb.go
+│   ├── google
+│   │   └── rpc
+│   │       └── status.proto
+│   └── currency.proto
+├── server
+│   ├── currencies.go
+│   ├── currencies_test.go
+│   ├── handler.go
+│   └── handler_test.go
+├── config.yaml
+├── Dockerfile
+├── go.mod
+├── go.sum
+├── main.go
+├── Makefile
+└── README.md
+```
