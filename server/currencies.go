@@ -6,7 +6,6 @@ import (
 	"io"
 	"log"
 	"strings"
-	"time"
 
 	data "github.com/chutified/currencies/data"
 	currency "github.com/chutified/currencies/protos/currency"
@@ -167,65 +166,4 @@ func (c *Currency) SubscribeCurrency(srv currency.Currency_SubscribeCurrencyServ
 
 	// exit
 	return nil
-}
-
-func (c *Currency) handleUpdates(url string) {
-
-	updates, errs := c.ds.MonitorData(15*time.Second, url)
-
-	// log errors
-	go func() {
-		for err := range errs {
-			c.log.Printf("[error] monitor data: %s", err)
-		}
-	}()
-
-	// update
-	for range updates {
-		c.log.Printf("[update] currency data updated")
-
-		// iterate over clients
-		for srv, reqs := range c.subscriptions {
-
-			// iterate over subscriptions
-			for _, req := range reqs {
-
-				// handle request
-				resp, err := c.handleGetCurrencyRequest(req)
-				if err != nil {
-					c.log.Printf("[error] unexpected request handle error: %v", err)
-
-					// defines gRPC error
-					gErr := status.Newf(
-						codes.NotFound,
-						"Currency \"%s\" was not found.", req.GetName(),
-					)
-
-					// send error message
-					err = srv.Send(&currency.StreamingSubscribeResponse{
-						Message: &currency.StreamingSubscribeResponse_Error{
-							Error: gErr.Proto(),
-						},
-					})
-					if err != nil {
-						c.log.Printf("[error] failed to send response: %v", err)
-					}
-
-					continue
-				}
-
-				// send reponse
-				err = srv.Send(&currency.StreamingSubscribeResponse{
-					Message: &currency.StreamingSubscribeResponse_GetCurrencyResponse{
-						GetCurrencyResponse: resp,
-					},
-				})
-				if err != nil {
-					c.log.Printf("[error] failed to send response: %v", err)
-
-					continue
-				}
-			}
-		}
-	}
 }
