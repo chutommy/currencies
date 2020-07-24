@@ -4,4 +4,4 @@ BTG KZT GMD NMR PEN ARDR DCR FUN REQ IRR QSP ANT CVE UAH MCO PYG BTM DOP NGN QTU
 
 source: https://markets.businessinsider.com/currencies
 
-TODO: tests for server, docker implementation, makefile build
+TODO: docker implementation, makefile build
