@@ -4,38 +4,95 @@ import "google/rpc/status.proto";
 
 option go_package=".;currency";
 
+
+// Currency defines the services and all available RPC calls.
 service Currency {
+
+    // GetCurrency provides the current data about one certain currency.
+    // The data holds the currency code, country of oritign, the description,
+    // the last currency value change in percentages, the exchange rate to USD
+    // and the time of the last update.
     rpc GetCurrency (GetCurrencyRequest) returns (GetCurrencyResponse);
+
+    // SubscribeCurrency works as the GetCurrency call, except that
+    // it does not send a response instantly but wait until the database
+    // changes some of its value, then it sends all subscribed currency data
+    // to each client.
     rpc SubscribeCurrency (stream GetCurrencyRequest) returns (stream StreamingSubscribeResponse);
+
+    // GetRate calculates the exchange rates between the base and
+    // the destination. The service takes the latest data
+    // from the source.
     rpc GetRate (GetRateRequest) returns (GetRateResponse);
 }
 
+
+// GetCurrencyRequest defines the request message for the GetCurrency and
+// the SubscribeCurrency calls.
 message GetCurrencyRequest {
+
+    // Name stands for the currency code for the currency.
+    // The Name value is not case sensitive.
     string Name = 1;
 }
 
+// GetCurrencyResponse defines the response message for the GetCurrency call
+// and the StreamingSubscribeResponse message.
 message GetCurrencyResponse {
+
+    // Name stands for the currency code for the currency.
+    // Every Name values are capitalized.
    string Name = 1;
+
+   // Country holds the name of the country where the currency came from.
    string Country = 2;
+
+   // Description is the full name of the currency.
    string Description = 3;
+
+   // Change represents the latest currency change in the percentages.
    float Change = 4;
+
+   // RateUSD is the exchange rates between the currency and the USD.
+   // Both currency values are taken from the lastest source update.
    float RateUSD = 5;
+
+   // UpdatedAt is the time of the last update of the currency in the source.
    string UpdatedAt = 6;
 }
 
+
+// StreamingSubscribeResponse defines the response message for
+// the SubscribeCurrency call. It holds either GetCurrencyResponse
+// or the Status error.
 message StreamingSubscribeResponse {
     oneof message{
-        GetCurrencyResponse get_currency_response = 1;
-        google.rpc.Status error = 2;
+
+        // Get_currency_response defines the response message with
+        // the data about the currency.
+        GetCurrencyResponse GetCurrencyResponse = 1;
+
+        // Error defines the error status of the problem which occured.
+        google.rpc.Status Error = 2;
     }
 }
 
 
+// GetRateRequest defines the request meesage for the GetRate call.
+// It needs the base currency and the destination currency.
 message GetRateRequest {
+
+    // Base represents the base currency fot the exchange rate.
     string Base = 1;
+
+    // Destination represents the destination currency fot the exchange rate.
     string Destination = 2;
 }
 
+// GetRateResponse defines the response message for the GetRate call.
+// It holds only the xchange rate of the request's base and destination.
 message GetRateResponse {
+
+    // Rate is the result exchange rate.
     float Rate = 1;
 }
