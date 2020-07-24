@@ -38,11 +38,13 @@ func TestGetConfig(t *testing.T) {
 			cfg, err := GetConfig(test.fileName)
 			if err != nil {
 
+				// check err message
 				exp := fmt.Sprintf(".*%s.*", test.err)
 				assert.MatchRegex(t1, err.Error(), exp)
 
 			} else {
 
+				// check non-nil values
 				cfg.Host = "127.0.0.1"
 				cfg.Port = 10502
 				assert.Equal(t1, "", test.err)

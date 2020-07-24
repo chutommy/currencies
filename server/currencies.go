@@ -34,7 +34,7 @@ func New(log *log.Logger, ds *data.Service) *Currency {
 
 	// monitoring
 	go func() {
-		c.handleUpdates(15*time.Second, "https://markets.businessinsider.com/currencies")
+		c.handleUpdates(6*time.Second, "https://markets.businessinsider.com/currencies")
 	}()
 
 	return c

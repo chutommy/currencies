@@ -34,6 +34,7 @@ func TestMonitorData(t *testing.T) {
 	t.Run("ok", func(t1 *testing.T) {
 		upds, errs := s.MonitorData(500*time.Millisecond, "https://markets.businessinsider.com/currencies")
 
+		// catch errors nad updates
 		var err error
 		go func() {
 			err = <-errs
@@ -49,6 +50,7 @@ func TestMonitorData(t *testing.T) {
 	t.Run("invalid URL", func(t1 *testing.T) {
 		upds, errs := s.MonitorData(500*time.Millisecond, "invalid_URL")
 
+		// catch errors nad updates
 		var err error
 		go func() {
 			err = <-errs

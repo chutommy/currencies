@@ -53,13 +53,17 @@ func TestParseRecords(t *testing.T) {
 	for _, test := range tests {
 		t.Run(test.name, func(t1 *testing.T) {
 
+			// clone the slice
 			rs := make([]record, len(reset))
 			copy(rs, reset)
+
+			// run the action
 			test.action(rs)
 
 			_, err := parseRecords(rs)
 			if err != nil {
 
+				// check error message
 				exp := fmt.Sprintf("%s.*", test.err)
 				assert.MatchRegex(t1, err.Error(), exp)
 
