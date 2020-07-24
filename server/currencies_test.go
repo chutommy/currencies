@@ -82,5 +82,3 @@ func TestCurrency(t *testing.T) {
 	// >>> SubscribeCurrency
 	// TODO
 }
-
-func TestHandleUpdates(t *testing.T) {}
