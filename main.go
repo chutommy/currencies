@@ -27,7 +27,7 @@ func main() {
 
 	// data service
 	ds := data.New()
-	err = ds.Update()
+	err = ds.Update("https://markets.businessinsider.com/currencies")
 	if err != nil {
 		log.Fatalf("[error] could not update data: %v", err)
 	}

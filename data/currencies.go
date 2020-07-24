@@ -55,10 +55,10 @@ func (ds *Service) GetRate(base string, dest string) (float32, error) {
 }
 
 // Update updates the Currencies data.
-func (ds *Service) Update() error {
+func (ds *Service) Update(url string) error {
 
 	// get data
-	rs, err := fetchData("https://markets.businessinsider.com/currencies")
+	rs, err := fetchData(url)
 	if err != nil {
 		return fmt.Errorf("fetching data: %w", err)
 	}
@@ -85,7 +85,7 @@ func (ds *Service) MonitorData(interval time.Duration) (chan struct{}, chan erro
 
 			// prepare maps
 			cache := ds.Currencies
-			err := ds.Update()
+			err := ds.Update("https://markets.businessinsider.com/currencies")
 			if err != nil {
 				errs <- fmt.Errorf("update currencies: %w", err)
 				continue
