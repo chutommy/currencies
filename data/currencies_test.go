@@ -12,7 +12,6 @@ func TestUpdate(t *testing.T) {
 	// >>> New()
 	s := New()
 
-	// >>> Update()
 	t.Run("ok", func(t1 *testing.T) {
 		err := s.Update("https://markets.businessinsider.com/currencies")
 		assert.Equal(t1, err, nil)
