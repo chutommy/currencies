@@ -73,7 +73,7 @@ func (ds *Service) Update(url string) error {
 }
 
 // MonitorData monitors the updates and whenever new values are pulled, it sends a signal through the channel.
-func (ds *Service) MonitorData(interval time.Duration) (chan struct{}, chan error) {
+func (ds *Service) MonitorData(interval time.Duration, url string) (chan struct{}, chan error) {
 
 	// prepare channels
 	update := make(chan struct{})
@@ -85,7 +85,7 @@ func (ds *Service) MonitorData(interval time.Duration) (chan struct{}, chan erro
 
 			// prepare maps
 			cache := ds.Currencies
-			err := ds.Update("https://markets.businessinsider.com/currencies")
+			err := ds.Update(url)
 			if err != nil {
 				errs <- fmt.Errorf("update currencies: %w", err)
 				continue

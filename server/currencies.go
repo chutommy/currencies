@@ -188,7 +188,7 @@ func (c *Currency) SubscribeCurrency(srv currency.Currency_SubscribeCurrencyServ
 
 func (c *Currency) handleUpdates() {
 
-	updates, errs := c.ds.MonitorData(15 * time.Second)
+	updates, errs := c.ds.MonitorData(15*time.Second, "https://markets.businessinsider.com/currencies")
 
 	// log errors
 	go func() {
