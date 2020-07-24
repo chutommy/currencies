@@ -45,7 +45,6 @@ func TestMonitorData(t *testing.T) {
 		time.Sleep(1 * time.Second)
 
 		assert.Equal(t1, err, nil)
-
 	})
 
 	t.Run("invalid URL", func(t1 *testing.T) {
@@ -61,5 +60,23 @@ func TestMonitorData(t *testing.T) {
 		time.Sleep(1 * time.Second)
 
 		assert.NotEqual(t1, err, nil)
+	})
+}
+
+func TestGetCurrency(t *testing.T) {
+	s := New()
+	err := s.Update("https://markets.businessinsider.com/currencies")
+	if err != nil {
+		t.Fatal("could not update data")
+	}
+
+	t.Run("ok", func(t1 *testing.T) {
+		_, err = s.GetCurrency("USD")
+		assert.Equal(t1, err, nil)
+	})
+
+	t.Run("invalid currency", func(t1 *testing.T) {
+		_, err = s.GetCurrency("invalid")
+		assert.Equal(t1, err.Error(), "currency 'invalid' not found")
 	})
 }
