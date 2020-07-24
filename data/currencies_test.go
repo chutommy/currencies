@@ -80,3 +80,26 @@ func TestGetCurrency(t *testing.T) {
 		assert.Equal(t1, err.Error(), "currency 'invalid' not found")
 	})
 }
+
+func TestGetRate(t *testing.T) {
+	s := New()
+	err := s.Update("https://markets.businessinsider.com/currencies")
+	if err != nil {
+		t.Fatal("could not update data")
+	}
+
+	t.Run("ok", func(t1 *testing.T) {
+		_, err = s.GetRate("EUR", "USD")
+		assert.Equal(t1, err, nil)
+	})
+
+	t.Run("invalid base", func(t1 *testing.T) {
+		_, err = s.GetRate("invalid", "USD")
+		assert.Equal(t1, err.Error(), "base currency 'invalid' not found")
+	})
+
+	t.Run("invalid destination", func(t1 *testing.T) {
+		_, err = s.GetRate("EUR", "invalid")
+		assert.Equal(t1, err.Error(), "destination currency 'invalid' not found")
+	})
+}
