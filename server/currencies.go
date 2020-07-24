@@ -53,10 +53,6 @@ func (c *Currency) GetCurrency(ctx context.Context, req *currency.GetCurrencyReq
 			codes.NotFound,
 			"Currency \"%s\" was not found.", req.GetName(),
 		)
-		gErr, wde := gErr.WithDetails(req)
-		if wde != nil {
-			c.log.Printf("[error] unexpected 'with details' fail: %v", wde)
-		}
 
 		return nil, gErr.Err()
 	}
@@ -78,10 +74,6 @@ func (c *Currency) GetRate(ctx context.Context, req *currency.GetRateRequest) (*
 			codes.NotFound,
 			"Currency was not found: %v.", err,
 		)
-		gErr, wde := gErr.WithDetails(req)
-		if wde != nil {
-			c.log.Printf("[error] unexpected 'with details' fail: %v", wde)
-		}
 
 		return nil, gErr.Err()
 	}
@@ -117,10 +109,6 @@ func (c *Currency) SubscribeCurrency(srv currency.Currency_SubscribeCurrencyServ
 				codes.NotFound,
 				"Currency \"%s\" was not found.", name,
 			)
-			gErr, wde := gErr.WithDetails(req)
-			if wde != nil {
-				c.log.Printf("[error] unexpected 'with details' fail: %v", wde)
-			}
 
 			// send error message
 			err = srv.Send(&currency.StreamingSubscribeResponse{
@@ -153,11 +141,6 @@ func (c *Currency) SubscribeCurrency(srv currency.Currency_SubscribeCurrencyServ
 					codes.Canceled,
 					"This client has already subscribed to the \"%s\".", name,
 				)
-				var wde error
-				validErr, wde = validErr.WithDetails(req)
-				if wde != nil {
-					c.log.Printf("[error] unexpected 'with details' fail: %v", wde)
-				}
 				break
 			}
 		}
@@ -217,10 +200,6 @@ func (c *Currency) handleUpdates() {
 						codes.NotFound,
 						"Currency \"%s\" was not found.", req.GetName(),
 					)
-					gErr, wde := gErr.WithDetails(req)
-					if wde != nil {
-						c.log.Printf("[error] unexpected 'with details' fail: %v", wde)
-					}
 
 					// send error message
 					err = srv.Send(&currency.StreamingSubscribeResponse{
