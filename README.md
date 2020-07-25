@@ -74,6 +74,8 @@ message GetRateRequest {
     "Destination":"USD"
 }
 ```
+<br>
+<br>
 
 __GetRateResponse__ defines the response message for the GetRate call. It holds only the xchange rate of the request's base and destination.
 
@@ -86,7 +88,8 @@ message GetRateResponse {
 ```json
     "Rate":1.1655
 ```
-
+<br>
+<br>
 
 ### Currency.GetCurrency
 GetRate calculates the exchange rates between the base and the destination. The service takes the latest data from the source.
@@ -98,6 +101,8 @@ __GetCurrencyRequest__ defines the request message for the GetCurrency and the S
 message GetCurrencyRequest {
     string Name = 1;
 ```
+<br>
+<br>
 
 __GetCurrencyResponse__ defines the response message for the GetCurrency call and the StreamingSubscribeResponse message.
 
@@ -117,11 +122,15 @@ message GetCurrencyResponse {
    string UpdatedAt = 6;
 }
 ```
+<br>
+<br>
 
 ### Currency.SubscribeCurrency
 SubscribeCurrency works as the GetCurrency call, except that it does not send a response instantly but wait until the database changes some of its value, then it sends all subscribed currency data to each client.
 
 __GetCurrencyResponse__ defines the response message for the GetCurrency call and the StreamingSubscribeResponse message.
+<br>
+<br>
 
 __StreamingSubscribeResponse__ defines the response message for the SubscribeCurrency call. It holds either GetCurrencyResponse or the Status error.
 
@@ -135,6 +144,8 @@ message StreamingSubscribeResponse {
     }
 }
 ```
+<br>
+<br>
 
 ## Directory structure
 ```bash
