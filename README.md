@@ -54,15 +54,16 @@ $ make run                    # initialize service
 ### Currency.GetRate
 GetCurrency provides the current data about one certain currency. The data holds the currency code, country of oritign, the description, the last currency value change in percentages, the exchange rate to USD and the time of the last update.
 
-__GetRateRequest__ defines the request meesage for the GetRate call. It needs the base currency and the destination currency. Supported currencies are <a href="">here</a>. **TODO**
+__GetRateRequest__ defines the request meesage for the GetRate call. It needs the base currency and the destination currency. Supported currencies are <a href="https://github.com/chutified/currencies#supported-currency-codes">here</a>.
+
+*Base represents the base currency fot the exchange rate.*<br>
+*Destination represents the destination currency fot the exchange rate.*
 ```proto
 message GetRateRequest {
     string Base = 1;
     string Destination = 2;
 }
 ```
-*Base represents the base currency fot the exchange rate.*
-*Destination represents the destination currency fot the exchange rate.*
 ```json
 {
     "Base":"EUR",
@@ -71,12 +72,13 @@ message GetRateRequest {
 ```
 
 __GetRateResponse__ defines the response message for the GetRate call. It holds only the xchange rate of the request's base and destination.
+
+*Rate is the result exchange rate.*
 ```proto
 message GetRateResponse {
     float Rate = 1;
 }
 ```
-*Rate is the result exchange rate.*
 ```json
     "Rate":1.1655
 ```
@@ -86,13 +88,21 @@ message GetRateResponse {
 GetRate calculates the exchange rates between the base and the destination. The service takes the latest data from the source.
 
 __GetCurrencyRequest__ defines the request message for the GetCurrency and the SubscribeCurrency calls.
+
+*Name stands for the currency code for the currency. The Name value is not case sensitive.*
 ```proto
 message GetCurrencyRequest {
     string Name = 1;
 ```
-*Name stands for the currency code for the currency. The Name value is not case sensitive.*
 
 __GetCurrencyResponse__ defines the response message for the GetCurrency call and the StreamingSubscribeResponse message.
+
+*Name stands for the currency code for the currency. Every Name values are capitalized.*<br>
+*Country holds the name of the country where the currency came from.*<br>
+*Description is the full name of the currency.*<br>
+*Change represents the latest currency change in the percentages.*<br>
+*RateUSD is the exchange rates between the currency and the USD. Both currency values are taken from the lastest source update.*<br>
+*UpdatedAt is the time of the last update of the currency in the source.*
 ```proto
 message GetCurrencyResponse {
    string Name = 1;
@@ -103,16 +113,24 @@ message GetCurrencyResponse {
    string UpdatedAt = 6;
 }
 ```
-*Name stands for the currency code for the currency. Every Name values are capitalized.*
-*Country holds the name of the country where the currency came from.*
-*Description is the full name of the currency.*
-*Change represents the latest currency change in the percentages.*
-*RateUSD is the exchange rates between the currency and the USD. Both currency values are taken from the lastest source update.*
-*UpdatedAt is the time of the last update of the currency in the source.*
 
 ### Currency.SubscribeCurrency
 SubscribeCurrency works as the GetCurrency call, except that it does not send a response instantly but wait until the database changes some of its value, then it sends all subscribed currency data to each client.
 
+__GetCurrencyResponse__ defines the response message for the GetCurrency call and the StreamingSubscribeResponse message.
+
+__StreamingSubscribeResponse__ defines the response message for the SubscribeCurrency call. It holds either GetCurrencyResponse or the Status error.
+
+*Get_currency_response defines the response message with the data about the currency.*<br>
+*Error defines the error status of the problem which occured.*
+```proto
+message StreamingSubscribeResponse {
+    oneof message{
+        GetCurrencyResponse GetCurrencyResponse = 1;
+        google.rpc.Status Error = 2;
+    }
+}
+```
 
 ## Directory structure
 ```bash
