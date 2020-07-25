@@ -364,6 +364,11 @@ ERROR:
 [CURRENCY SERVICE]2020/07/25 11:02:50 [update] currency data updated
 ```
 
+## Client
+All clients can be built with the help of the <a href="https://grpc.io/docs/protoc-installation/" target="_blank">Protocol Buffer Compiler</a> with the <a href="https://grpc.io/" target="_blank">gRPC</a> plugin.
+
+*The protobuffer of the services:* <a href="https://github.com/chutified/currencies/blob/master/protos/currency.proto">commodity.proto</a>
+
 ## Directory structure
 ```bash
 _
