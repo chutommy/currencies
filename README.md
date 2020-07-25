@@ -57,6 +57,7 @@ $ make run                    # initialize service
 ## Usage
 ### Currency.GetRate
 GetCurrency provides the current data about one certain currency. The data holds the currency code, country of oritign, the description, the last currency value change in percentages, the exchange rate to USD and the time of the last update.
+<br>
 
 __GetRateRequest__ defines the request meesage for the GetRate call. It needs the base currency and the destination currency. Supported currencies are <a href="https://github.com/chutified/currencies#supported-currency-codes">here</a>.
 
@@ -75,7 +76,6 @@ message GetRateRequest {
 }
 ```
 <br>
-<br>
 
 __GetRateResponse__ defines the response message for the GetRate call. It holds only the xchange rate of the request's base and destination.
 
@@ -89,10 +89,10 @@ message GetRateResponse {
     "Rate":1.1655
 ```
 <br>
-<br>
 
 ### Currency.GetCurrency
 GetRate calculates the exchange rates between the base and the destination. The service takes the latest data from the source.
+<br>
 
 __GetCurrencyRequest__ defines the request message for the GetCurrency and the SubscribeCurrency calls.
 
@@ -101,7 +101,11 @@ __GetCurrencyRequest__ defines the request message for the GetCurrency and the S
 message GetCurrencyRequest {
     string Name = 1;
 ```
-<br>
+```json
+{
+    "Name":"CAD"
+}
+```
 <br>
 
 __GetCurrencyResponse__ defines the response message for the GetCurrency call and the StreamingSubscribeResponse message.
@@ -122,14 +126,27 @@ message GetCurrencyResponse {
    string UpdatedAt = 6;
 }
 ```
-<br>
+```json
+{
+    "Name": "CAD",
+    "Country": "Canada",
+    "Description": "Canadian Dollar",
+    "Change": -0.02,
+    "RateUSD": 1.3416,
+    "UpdatedAt": "2020-07-25 04:04:00 +0000 UTC"
+}
+```
 <br>
 
 ### Currency.SubscribeCurrency
 SubscribeCurrency works as the GetCurrency call, except that it does not send a response instantly but wait until the database changes some of its value, then it sends all subscribed currency data to each client.
+<br>
 
 __GetCurrencyResponse__ defines the response message for the GetCurrency call and the StreamingSubscribeResponse message.
-<br>
+```json
+{"Name":"GBP"}
+{"Name":"VND"}
+```
 <br>
 
 __StreamingSubscribeResponse__ defines the response message for the SubscribeCurrency call. It holds either GetCurrencyResponse or the Status error.
@@ -144,7 +161,35 @@ message StreamingSubscribeResponse {
     }
 }
 ```
-<br>
+```
+{
+    "GetCurrencyResponse": {
+        "Name": "GBP",
+        "Country": "England",
+        "Description": "British Pound",
+        "Change": -0.03,
+        "RateUSD": 0.7815,
+        "UpdatedAt": "2020-07-25 04:04:00 +0000 UTC"
+    }
+}
+{
+    "GetCurrencyResponse": {
+        "Name": "VND",
+        "Country": "Vietnam",
+        "Description": "Vietnamese Dong",
+        "Change": 0.02,
+        "RateUSD": 23185,
+        "UpdatedAt": "2020-07-25 04:04:00 +0000 UTC"
+    }
+}
+```
+Server logs:
+```bash
+[CURRENCY SERVICE]2020/07/25 10:25:14 [start] listening on 127.0.0.1:10502
+[CURRENCY SERVICE]2020/07/25 10:25:23 [success] client successfully subscribed to: GBP
+[CURRENCY SERVICE]2020/07/25 10:25:31 [success] client successfully subscribed to: VND
+[CURRENCY SERVICE]2020/07/25 10:25:32 [update] currency data updated
+```
 <br>
 
 ## Directory structure
