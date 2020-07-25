@@ -1,8 +1,8 @@
 # Currencies
 
-The Currencies is a microservice, which using <a href="https://markets.businessinsider.com/currencies" target="_blank">gRPC technology</a>.
-It supports both unary and bidirectional calls, which allows data updates every 6 seconds.
-It also provides the latest exchange rates of all currencies from every country. When an error occurs, it can handle it in a non-faal way with the error messages.
+The Currencies is a microservice, which is using <a href="https://markets.businessinsider.com/currencies" target="_blank">gRPC technology</a>.
+It supports both unary and bidirectional streaming calls, which allows data update every 6 seconds.
+It also provides the latest exchange rates of all currencies from every country. When an error occurs, it handles it in a non-fatal way with the error message.
 
 The whole service is containerized using a Docker engine and everything can be easily run and deployed with the pre-prepared `make` commands in the Makefile.
 
@@ -220,7 +220,7 @@ For these examples, we will be using the tool called <a href="https://github.com
 ```
 
 ### GetCurrency
-#### Currency.GetCurrency:
+#### Currency.GetCurrency: `{"Name":"USD"}`
 ```bash
 [chutified@localhost currencies]$ grpcurl --plaintext -d '{"Name":"USD"}' 127.0.0.1:10502 Currency.GetCurrency
 {
@@ -232,7 +232,7 @@ For these examples, we will be using the tool called <a href="https://github.com
 }
 ```
 
-#### Currency.GetCurrency:
+#### Currency.GetCurrency: `{"Name":"GBP"}`
 ```bash
 [chutified@localhost currencies]$ grpcurl --plaintext -d '{"Name":"GBP"}' 127.0.0.1:10502 Currency.GetCurrency
 {
@@ -244,7 +244,7 @@ For these examples, we will be using the tool called <a href="https://github.com
     "UpdatedAt": "2020-07-25 04:04:00 +0000 UTC"
 }
 ```
-#### Currency.GetCurrency:
+#### Currency.GetCurrency: `{"Name":"CAD"}`
 ```bash
 [chutified@localhost currencies]$ grpcurl --plaintext -d '{"Name":"CAD"}' 127.0.0.1:10502 Currency.GetCurrency
 {
@@ -265,7 +265,7 @@ For these examples, we will be using the tool called <a href="https://github.com
 ```
 
 ### SubscribeCurrency
-### Currency.SubscribeCurrency
+### Currency.SubscribeCurrency: `{"Name":"CAD"}{"Name":"CZK"}{"Name":"GBP"}`
 ```bash
 [chutified@localhost currencies]$ grpcurl --plaintext -d @ 127.0.0.1:10502 Currency.SubscribeCurrency
 {"Name":"CAD"}
@@ -313,6 +313,55 @@ For these examples, we will be using the tool called <a href="https://github.com
 [CURRENCY SERVICE]2020/07/25 10:46:10 [success] client successfully subscribed to: CZK
 [CURRENCY SERVICE]2020/07/25 10:46:15 [success] client successfully subscribed to: GBP
 [CURRENCY SERVICE]2020/07/25 10:46:18 [update] currency data updated
+```
+
+### Error handling
+#### Currency.GetRate
+```bash
+[chutified@localhost currencies]$ grpcurl --plaintext -d '{"Base":"USD", "Destination":"invalid"}' 127.0.0.1:10502 Currency.GetRate
+ERROR:
+    Code: NotFound
+    Message: Currency was not found: call GetRate: destination currency 'INVALID' not found.
+```
+
+#### Currency.GetCurrency
+```bash
+[chutified@localhost currencies]$ grpcurl --plaintext -d '{"Name":"invalid"}' 127.0.0.1:10502 Currency.GetCurrency
+ERROR:
+    Code: NotFound
+    Message: Currency "invalid" was not found.
+```
+
+#### Currency.SubscribeCurrency
+```bash
+[chutified@localhost currencies]$ grpcurl --plaintext -d @ 127.0.0.1:10502 Currency.SubscribeCurrency
+{"Name":"invalid"}
+{
+    "Error": {
+        "code": 5,
+        "message": "Currency \"INVALID\" was not found."
+    }
+}
+{"Name":"USD"}
+{
+    "GetCurrencyResponse": {
+        "Name": "USD",
+        "Country": "United States of America",
+        "Description": "United States Dollar",
+        "RateUSD": 1,
+        "UpdatedAt": "2020-07-25 11:02:50.145063563 +0200 CEST m=+45.314325138"
+    }
+}
+```
+
+#### Server logs
+```bash
+[CURRENCY SERVICE]2020/07/25 11:02:08 [start] listening on 127.0.0.1:10502
+[CURRENCY SERVICE]2020/07/25 11:02:10 [error] handle error: call GetRate: destination currency 'INVALID' not found
+[CURRENCY SERVICE]2020/07/25 11:02:18 [error] handle error: handling GetCurrency call: currency 'INVALID' not found
+[CURRENCY SERVICE]2020/07/25 11:02:35 [error] currency "INVALID" not found
+[CURRENCY SERVICE]2020/07/25 11:02:47 [success] client successfully subscribed to: USD
+[CURRENCY SERVICE]2020/07/25 11:02:50 [update] currency data updated
 ```
 
 ## Directory structure
