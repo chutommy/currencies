@@ -57,7 +57,6 @@ $ make run                    # initialize service
 ## Usage
 ### Currency.GetRate
 GetCurrency provides the current data about one certain currency. The data holds the currency code, country of oritign, the description, the last currency value change in percentages, the exchange rate to USD and the time of the last update.
-<br>
 
 __GetRateRequest__ defines the request meesage for the GetRate call. It needs the base currency and the destination currency. Supported currencies are <a href="https://github.com/chutified/currencies#supported-currency-codes">here</a>.
 
@@ -75,7 +74,6 @@ message GetRateRequest {
     "Destination":"USD"
 }
 ```
-<br>
 
 __GetRateResponse__ defines the response message for the GetRate call. It holds only the xchange rate of the request's base and destination.
 
@@ -88,11 +86,9 @@ message GetRateResponse {
 ```json
     "Rate":1.1655
 ```
-<br>
 
 ### Currency.GetCurrency
 GetRate calculates the exchange rates between the base and the destination. The service takes the latest data from the source.
-<br>
 
 __GetCurrencyRequest__ defines the request message for the GetCurrency and the SubscribeCurrency calls.
 
@@ -106,7 +102,6 @@ message GetCurrencyRequest {
     "Name":"CAD"
 }
 ```
-<br>
 
 __GetCurrencyResponse__ defines the response message for the GetCurrency call and the StreamingSubscribeResponse message.
 
@@ -136,18 +131,15 @@ message GetCurrencyResponse {
     "UpdatedAt": "2020-07-25 04:04:00 +0000 UTC"
 }
 ```
-<br>
 
 ### Currency.SubscribeCurrency
 SubscribeCurrency works as the GetCurrency call, except that it does not send a response instantly but wait until the database changes some of its value, then it sends all subscribed currency data to each client.
-<br>
 
 __GetCurrencyResponse__ defines the response message for the GetCurrency call and the StreamingSubscribeResponse message.
 ```json
 {"Name":"GBP"}
 {"Name":"VND"}
 ```
-<br>
 
 __StreamingSubscribeResponse__ defines the response message for the SubscribeCurrency call. It holds either GetCurrencyResponse or the Status error.
 
@@ -190,7 +182,138 @@ Server logs:
 [CURRENCY SERVICE]2020/07/25 10:25:31 [success] client successfully subscribed to: VND
 [CURRENCY SERVICE]2020/07/25 10:25:32 [update] currency data updated
 ```
-<br>
+
+## Examples
+For these examples, we will be using the tool called <a href="https://github.com/fullstorydev/grpcurl" target="_blank">gRPCurl</a> to generate binary calls to gRPC servers.
+
+### GetRate
+#### Currency.GetRate: `{"Base":"RUB", "Destination":"USD"}`
+```bash
+[chutified@localhost currencies]$ grpcurl --plaintext -d '{"Base":"RUB", "Destination":"USD"}' 127.0.0.1:10502 Currency.GetRate
+{
+    "Rate": 0.0139
+}
+```
+
+#### Currency.GetRate: `{"Base":"GBP", "Destination":"EUR"}`
+```bash
+[chutified@localhost currencies]$ grpcurl --plaintext -d '{"Base":"GBP", "Destination":"EUR"}' 127.0.0.1:10502 Currency.GetRate
+{
+    "Rate": 1.0979
+}
+```
+
+#### Currency.GetRate: `{"Base":"CZK", "Destination":"CAD"}`
+```bash
+[chutified@localhost currencies]$ grpcurl --plaintext -d '{"Base":"CZK", "Destination":"CAD"}' 127.0.0.1:10502 Currency.GetRate
+{
+    "Rate": 0.0596
+}
+```
+
+#### Server logs
+```bash
+[CURRENCY SERVICE]2020/07/25 10:38:01 [start] listening on 127.0.0.1:10502
+[CURRENCY SERVICE]2020/07/25 10:38:32 [handle] GetRate call, base: RUB, destination: USD
+[CURRENCY SERVICE]2020/07/25 10:38:51 [handle] GetRate call, base: GBP, destination: EUR
+[CURRENCY SERVICE]2020/07/25 10:39:11 [handle] GetRate call, base: CZK, destination: CAD
+```
+
+### GetCurrency
+#### Currency.GetCurrency:
+```bash
+[chutified@localhost currencies]$ grpcurl --plaintext -d '{"Name":"USD"}' 127.0.0.1:10502 Currency.GetCurrency
+{
+    "Name": "USD",
+    "Country": "United States of America",
+    "Description": "United States Dollar",
+    "RateUSD": 1,
+    "UpdatedAt": "2020-07-25 10:42:26.385028702 +0200 CEST m=+0.180421634"
+}
+```
+
+#### Currency.GetCurrency:
+```bash
+[chutified@localhost currencies]$ grpcurl --plaintext -d '{"Name":"GBP"}' 127.0.0.1:10502 Currency.GetCurrency
+{
+    "Name": "GBP",
+    "Country": "England",
+    "Description": "British Pound",
+    "Change": -0.03,
+    "RateUSD": 0.7815,
+    "UpdatedAt": "2020-07-25 04:04:00 +0000 UTC"
+}
+```
+#### Currency.GetCurrency:
+```bash
+[chutified@localhost currencies]$ grpcurl --plaintext -d '{"Name":"CAD"}' 127.0.0.1:10502 Currency.GetCurrency
+{
+    "Name": "CAD",
+    "Country": "Canada",
+    "Description": "Canadian Dollar",
+    "Change": -0.02,
+    "RateUSD": 1.3416,
+    "UpdatedAt": "2020-07-25 04:04:00 +0000 UTC"
+}
+```
+#### Server logs
+```bash
+[CURRENCY SERVICE]2020/07/25 10:42:10 [start] listening on 127.0.0.1:10502
+[CURRENCY SERVICE]2020/07/25 10:42:27 [handle] GetCurrency call: USD
+[CURRENCY SERVICE]2020/07/25 10:42:32 [handle] GetCurrency call: GBP
+[CURRENCY SERVICE]2020/07/25 10:42:38 [handle] GetCurrency call: CAD
+```
+
+### SubscribeCurrency
+### Currency.SubscribeCurrency
+```bash
+[chutified@localhost currencies]$ grpcurl --plaintext -d @ 127.0.0.1:10502 Currency.SubscribeCurrency
+{"Name":"CAD"}
+{"Name":"CZK"}
+{"Name":"GBP"}
+```
+
+#### AFTER UPDATE
+```bash
+{
+    "GetCurrencyResponse": {
+        "Name": "CAD",
+        "Country": "Canada",
+        "Description": "Canadian Dollar",
+        "Change": -0.02,
+        "RateUSD": 1.3416,
+        "UpdatedAt": "2020-07-25 04:04:00 +0000 UTC"
+    }
+}
+{
+    "GetCurrencyResponse": {
+        "Name": "CZK",
+        "Country": "Czech Republic",
+        "Description": "Czech Koruna",
+        "RateUSD": 22.526,
+        "UpdatedAt": "2020-07-25 04:04:00 +0000 UTC"
+    }
+}
+{
+    "GetCurrencyResponse": {
+        "Name": "GBP",
+        "Country": "England",
+        "Description": "British Pound",
+        "Change": -0.03,
+        "RateUSD": 0.7815,
+        "UpdatedAt": "2020-07-25 04:04:00 +0000 UTC"
+    }
+}
+```
+
+#### Server logs
+```bash
+[CURRENCY SERVICE]2020/07/25 10:46:01 [start] listening on 127.0.0.1:10502
+[CURRENCY SERVICE]2020/07/25 10:46:03 [success] client successfully subscribed to: CAD
+[CURRENCY SERVICE]2020/07/25 10:46:10 [success] client successfully subscribed to: CZK
+[CURRENCY SERVICE]2020/07/25 10:46:15 [success] client successfully subscribed to: GBP
+[CURRENCY SERVICE]2020/07/25 10:46:18 [update] currency data updated
+```
 
 ## Directory structure
 ```bash
