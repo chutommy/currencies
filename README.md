@@ -1,6 +1,7 @@
 # Currencies
 
-The Currencies is a microservice, which using <a href="https://markets.businessinsider.com/currencies" target="_blank">gRPC technology</a>. It supports both unary and bidirectional calls, which allows data updates every 6 seconds.
+The Currencies is a microservice, which using <a href="https://markets.businessinsider.com/currencies" target="_blank">gRPC technology</a>.
+It supports both unary and bidirectional calls, which allows data updates every 6 seconds.
 It also provides the latest exchange rates of all currencies from every country. When an error occurs, it can handle it in a non-faal way with the error messages.
 
 The whole service is containerized using a Docker engine and everything can be easily run and deployed with the pre-prepared `make` commands in the Makefile.
@@ -48,6 +49,69 @@ $ make run                    # initialize service
 **Note:**
 *The Currency request holds the key "Name" and its value is **not** case sensitive.*
 *Currency names must not be completely lowercase nor uppercase to be found.*
+
+## Usage
+### Currency.GetRate
+GetCurrency provides the current data about one certain currency. The data holds the currency code, country of oritign, the description, the last currency value change in percentages, the exchange rate to USD and the time of the last update.
+
+__GetRateRequest__ defines the request meesage for the GetRate call. It needs the base currency and the destination currency. Supported currencies are <a href="">here</a>. **TODO**
+```proto
+message GetRateRequest {
+    string Base = 1;
+    string Destination = 2;
+}
+```
+*Base represents the base currency fot the exchange rate.*
+*Destination represents the destination currency fot the exchange rate.*
+```json
+{
+    "Base":"EUR",
+    "Destination":"USD"
+}
+```
+
+__GetRateResponse__ defines the response message for the GetRate call. It holds only the xchange rate of the request's base and destination.
+```proto
+message GetRateResponse {
+    float Rate = 1;
+}
+```
+*Rate is the result exchange rate.*
+```json
+    "Rate":1.1655
+```
+
+
+### Currency.GetCurrency
+GetRate calculates the exchange rates between the base and the destination. The service takes the latest data from the source.
+
+__GetCurrencyRequest__ defines the request message for the GetCurrency and the SubscribeCurrency calls.
+```proto
+message GetCurrencyRequest {
+    string Name = 1;
+```
+*Name stands for the currency code for the currency. The Name value is not case sensitive.*
+
+__GetCurrencyResponse__ defines the response message for the GetCurrency call and the StreamingSubscribeResponse message.
+```proto
+message GetCurrencyResponse {
+   string Name = 1;
+   string Country = 2;
+   string Description = 3;
+   float Change = 4;
+   float RateUSD = 5;
+   string UpdatedAt = 6;
+}
+```
+*Name stands for the currency code for the currency. Every Name values are capitalized.*
+*Country holds the name of the country where the currency came from.*
+*Description is the full name of the currency.*
+*Change represents the latest currency change in the percentages.*
+*RateUSD is the exchange rates between the currency and the USD. Both currency values are taken from the lastest source update.*
+*UpdatedAt is the time of the last update of the currency in the source.*
+
+### Currency.SubscribeCurrency
+SubscribeCurrency works as the GetCurrency call, except that it does not send a response instantly but wait until the database changes some of its value, then it sends all subscribed currency data to each client.
 
 
 ## Directory structure
