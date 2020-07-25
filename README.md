@@ -8,7 +8,7 @@ The whole service is containerized using a Docker engine and everything can be e
 
 The Currencies obtains all necessary data from the <a href="https://markets.businessinsider.com/currencies" target="_blank">Business Insider</a> website. The algorithm does not infringe any copyrights nor the website robots exclusion protocol.
 
-## Instalation
+## Installation
 
 ### Requirements
 - <a href="https://git-scm.com/downloads" target="_blank">Git</a>
@@ -18,7 +18,7 @@ The Currencies obtains all necessary data from the <a href="https://markets.busi
 This is the exact way to download and run the service. On a Windows machine, the installation process would be slightly different.
 ```bash
 $ git clone https://github.com/chutified/currencies.git     # download repository
-$ cd currencies         # move to repository dir
+$ cd currencies               # move to repository dir
 $ make build                  # build docker image
 $ make run                    # initialize service
 ```
@@ -58,10 +58,10 @@ $ make run                    # initialize service
 ### Currency.GetRate
 GetCurrency provides the current data about one certain currency. The data holds the currency code, country of oritign, the description, the last currency value change in percentages, the exchange rate to USD and the time of the last update.
 
-__GetRateRequest__ defines the request meesage for the GetRate call. It needs the base currency and the destination currency. Supported currencies are <a href="https://github.com/chutified/currencies#supported-currency-codes">here</a>.
+__GetRateRequest__ defines the request message for the GetRate call. It needs the base currency and the destination currency. Supported currencies are <a href="https://github.com/chutified/currencies#supported-currency-codes">here</a>.
 
-*Base represents the base currency fot the exchange rate.*<br>
-*Destination represents the destination currency fot the exchange rate.*
+*Base represents the base currency for the exchange rate.*<br>
+*Destination represents the destination currency for the exchange rate.*
 ```proto
 message GetRateRequest {
     string Base = 1;
@@ -75,7 +75,7 @@ message GetRateRequest {
 }
 ```
 
-__GetRateResponse__ defines the response message for the GetRate call. It holds only the xchange rate of the request's base and destination.
+__GetRateResponse__ defines the response message for the GetRate call. It holds only the exchange rate of the request's base and destination.
 
 *Rate is the result exchange rate.*
 ```proto
@@ -105,7 +105,7 @@ message GetCurrencyRequest {
 
 __GetCurrencyResponse__ defines the response message for the GetCurrency call and the StreamingSubscribeResponse message.
 
-*Name stands for the currency code for the currency. Every Name values are capitalized.*<br>
+*Name stands for the currency code for the currency. Every Name value is capitalized.*<br>
 *Country holds the name of the country where the currency came from.*<br>
 *Description is the full name of the currency.*<br>
 *Change represents the latest currency change in the percentages.*<br>
@@ -144,7 +144,7 @@ __GetCurrencyResponse__ defines the response message for the GetCurrency call an
 __StreamingSubscribeResponse__ defines the response message for the SubscribeCurrency call. It holds either GetCurrencyResponse or the Status error.
 
 *Get_currency_response defines the response message with the data about the currency.*<br>
-*Error defines the error status of the problem which occured.*
+*Error defines the error status of the problem which occurred.*
 ```proto
 message StreamingSubscribeResponse {
     oneof message{
@@ -265,7 +265,7 @@ For these examples, we will be using the tool called <a href="https://github.com
 ```
 
 ### SubscribeCurrency
-### Currency.SubscribeCurrency: `{"Name":"CAD"}{"Name":"CZK"}{"Name":"GBP"}`
+#### Currency.SubscribeCurrency: `{"Name":"CAD"}{"Name":"CZK"}{"Name":"GBP"}`
 ```bash
 [chutified@localhost currencies]$ grpcurl --plaintext -d @ 127.0.0.1:10502 Currency.SubscribeCurrency
 {"Name":"CAD"}
@@ -273,7 +273,7 @@ For these examples, we will be using the tool called <a href="https://github.com
 {"Name":"GBP"}
 ```
 
-#### AFTER UPDATE
+#### UPDATE
 ```bash
 {
     "GetCurrencyResponse": {
