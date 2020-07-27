@@ -63,7 +63,6 @@ func (c *Currency) handleUpdates(interval time.Duration, url string) {
 	go func() {
 		for err := range errs {
 			c.log.Printf("[error] monitor data: %s", err)
-			time.Sleep(4 * time.Second)
 		}
 	}()
 
