@@ -94,7 +94,6 @@ func (c *Currency) SubscribeCurrency(srv currency.Currency_SubscribeCurrencyServ
 
 			// cancel all subscriptions
 			delete(c.subscriptions, srv)
-			fmt.Println(c.subscriptions[srv])
 
 			c.log.Printf("[exit] client closed SubscribeCurrency call")
 			return nil
