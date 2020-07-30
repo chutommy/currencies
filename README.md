@@ -1,6 +1,6 @@
 # Currencies
 
-The Currencies is a microservice, which is using <a href="https://markets.businessinsider.com/currencies" target="_blank">gRPC technology</a>.
+The Currencies is a microservice, which is using <a href="https://grpc.io/" target="_blank">gRPC technology</a>.
 It supports both unary and bidirectional streaming calls, which allows data update every 6 seconds.
 It also provides the latest exchange rates of all currencies from every country. When an error occurs, it handles it in a non-fatal way with the error message.
 
