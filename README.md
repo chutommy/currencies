@@ -135,7 +135,7 @@ message GetCurrencyResponse {
 ### Currency.SubscribeCurrency
 SubscribeCurrency works as the GetCurrency call, except that it does not send a response instantly but wait until the database changes some of its value, then it sends all subscribed currency data to each client.
 
-__GetCurrencyResponse__ defines the response message for the GetCurrency call and the StreamingSubscribeResponse message.
+__GetCurrencyRequest__ defines the request message for the GetCurrency and the SubscribeCurrency calls.
 ```json
 {"Name":"GBP"}
 {"Name":"VND"}
