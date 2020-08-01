@@ -135,7 +135,7 @@ message GetCurrencyResponse {
 ### Currency.SubscribeCurrency
 SubscribeCurrency works as the GetCurrency call, except that it does not send a response instantly but wait until the database changes some of its value, then it sends all subscribed currency data to each client.
 
-__GetCurrencyResponse__ defines the response message for the GetCurrency call and the StreamingSubscribeResponse message.
+__GetCurrencyRequest__ defines the request message for the GetCurrency and the SubscribeCurrency calls.
 ```json
 {"Name":"GBP"}
 {"Name":"VND"}
@@ -316,7 +316,7 @@ For these examples, we will be using the tool called <a href="https://github.com
 ```
 
 ### Error handling
-#### Currency.GetRate
+#### Currency.GetRate: `{"Base":"USD", "Destination":"invalid"}`
 ```bash
 [chutified@localhost currencies]$ grpcurl --plaintext -d '{"Base":"USD", "Destination":"invalid"}' 127.0.0.1:10502 Currency.GetRate
 ERROR:
@@ -324,7 +324,7 @@ ERROR:
     Message: Currency was not found: call GetRate: destination currency 'INVALID' not found.
 ```
 
-#### Currency.GetCurrency
+#### Currency.GetCurrency: `{"Name":"invalid"}`
 ```bash
 [chutified@localhost currencies]$ grpcurl --plaintext -d '{"Name":"invalid"}' 127.0.0.1:10502 Currency.GetCurrency
 ERROR:
@@ -332,7 +332,7 @@ ERROR:
     Message: Currency "invalid" was not found.
 ```
 
-#### Currency.SubscribeCurrency
+#### Currency.SubscribeCurrency: `{"Name":"invalid"}`
 ```bash
 [chutified@localhost currencies]$ grpcurl --plaintext -d @ 127.0.0.1:10502 Currency.SubscribeCurrency
 {"Name":"invalid"}
