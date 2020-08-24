@@ -15,7 +15,7 @@ The Currencies obtains all necessary data from the <a href="https://markets.busi
 - <a href="https://docs.docker.com/get-docker/" target="_blank">Docker Engine</a>
 
 ### Linux/Mac
-This is the exact way to download and run the service. On a Windows machine, the installation process would be slightly different.
+The installation process on the Windows machines would be slightly different.
 ```bash
 $ git clone https://github.com/chutified/currencies.git     # download repository
 $ cd currencies               # move to repository dir
@@ -52,7 +52,6 @@ $ make run                    # initialize service
 
 **Note:**
 *The Currency request holds the key "Name" and its value is **not** case sensitive.*
-*Currency names must not be completely lowercase nor uppercase to be found.*
 
 ## Usage
 ### Currency.GetRate
@@ -184,7 +183,7 @@ Server logs:
 ```
 
 ## Examples
-For these examples, we will be using the tool called <a href="https://github.com/fullstorydev/grpcurl" target="_blank">gRPCurl</a> to generate binary calls to gRPC servers.
+For these examples, I am using the tool called <a href="https://github.com/fullstorydev/grpcurl" target="_blank">gRPCurl</a> to generate binary calls to gRPC servers.
 
 ### GetRate
 #### Currency.GetRate: `{"Base":"RUB", "Destination":"USD"}`
@@ -365,7 +364,7 @@ ERROR:
 ```
 
 ## Client
-All clients can be built with the help of the <a href="https://grpc.io/docs/protoc-installation/" target="_blank">Protocol Buffer Compiler</a> with the <a href="https://grpc.io/" target="_blank">gRPC</a> plugin.
+All clients can be built with the <a href="https://grpc.io/docs/protoc-installation/" target="_blank">Protocol Buffer Compiler</a> + <a href="https://grpc.io/" target="_blank">gRPC</a> plugin.
 
 *The protobuffer of the services:* <a href="https://github.com/chutified/currencies/blob/master/protos/currency.proto">commodity.proto</a>
 
