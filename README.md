@@ -1,10 +1,10 @@
 # Currencies
 
-The Currencies is a microservice, which is using <a href="https://grpc.io/" target="_blank">gRPC technology</a>.
+The Currencies is a microservice, which uses <a href="https://grpc.io/" target="_blank">gRPC technology</a>.
 It supports both unary and bidirectional streaming calls, which allows data update every 6 seconds.
-It also provides the latest exchange rates of all currencies from every country. When an error occurs, it handles it in a non-fatal way with the error message.
+The service provides the latest market exchange rates of all currencies from all country. When an error occurs, it handles it in a non-fatal way with an error message.
 
-The whole service is containerized using a Docker engine and everything can be easily run and deployed with the pre-prepared `make` commands in the Makefile.
+The whole service is containerized using a Docker engine and the service can be easily launched and deployed with the pre-prepared `make` commands in the Makefile.
 
 The Currencies obtains all necessary data from the <a href="https://markets.businessinsider.com/currencies" target="_blank">Business Insider</a> website. The algorithm does not infringe any copyrights nor the website robots exclusion protocol.
 
