@@ -55,7 +55,7 @@ $ make run                    # initialize service
 
 ## Usage
 ### Currency.GetRate
-GetCurrency provides the current data about one certain currency. The data holds the currency code, country of oritign, the description, the last currency value change in percentages, the exchange rate to USD and the time of the last update.
+GetCurrency provides current data of one certain currency. The data holds the currency code, country of origin, the description, the last currency value change in percentages, the exchange rate to USD and the time of the last update.
 
 __GetRateRequest__ defines the request message for the GetRate call. It needs the base currency and the destination currency. Supported currencies are <a href="https://github.com/chutified/currencies#supported-currency-codes">here</a>.
 
@@ -87,7 +87,7 @@ message GetRateResponse {
 ```
 
 ### Currency.GetCurrency
-GetRate calculates the exchange rates between the base and the destination. The service takes the latest data from the source.
+GetRate calculates the exchange rate between the base and the destination. The service takes the latest data from the source.
 
 __GetCurrencyRequest__ defines the request message for the GetCurrency and the SubscribeCurrency calls.
 
