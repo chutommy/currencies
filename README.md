@@ -17,7 +17,7 @@ The Currencies obtains all necessary data from the <a href="https://markets.busi
 ### Linux/Mac
 The installation process on the Windows machines would be slightly different.
 ```bash
-$ git clone https://github.com/chutified/currencies.git     # download repository
+$ git clone https://github.com/chutommy/currencies.git     # download repository
 $ cd currencies               # move to repository dir
 $ make build                  # build docker image
 $ make run                    # initialize service
@@ -57,7 +57,7 @@ $ make run                    # initialize service
 ### Currency.GetRate
 GetCurrency provides current data of one certain currency. The data holds the currency code, country of origin, the description, the last currency value change in percentages, the exchange rate to USD and the time of the last update.
 
-__GetRateRequest__ defines the request message for the GetRate call. It needs the base currency and the destination currency. Supported currencies are <a href="https://github.com/chutified/currencies#supported-currency-codes">here</a>.
+__GetRateRequest__ defines the request message for the GetRate call. It needs the base currency and the destination currency. Supported currencies are <a href="https://github.com/chutommy/currencies#supported-currency-codes">here</a>.
 
 *Base represents the base currency for the exchange rate.*<br>
 *Destination represents the destination currency for the exchange rate.*
@@ -188,7 +188,7 @@ For these examples, I am using the tool called <a href="https://github.com/fulls
 ### GetRate
 #### Currency.GetRate: `{"Base":"RUB", "Destination":"USD"}`
 ```bash
-[chutified@localhost currencies]$ grpcurl --plaintext -d '{"Base":"RUB", "Destination":"USD"}' 127.0.0.1:10502 Currency.GetRate
+[chutommy@localhost currencies]$ grpcurl --plaintext -d '{"Base":"RUB", "Destination":"USD"}' 127.0.0.1:10502 Currency.GetRate
 {
     "Rate": 0.0139
 }
@@ -196,7 +196,7 @@ For these examples, I am using the tool called <a href="https://github.com/fulls
 
 #### Currency.GetRate: `{"Base":"GBP", "Destination":"EUR"}`
 ```bash
-[chutified@localhost currencies]$ grpcurl --plaintext -d '{"Base":"GBP", "Destination":"EUR"}' 127.0.0.1:10502 Currency.GetRate
+[chutommy@localhost currencies]$ grpcurl --plaintext -d '{"Base":"GBP", "Destination":"EUR"}' 127.0.0.1:10502 Currency.GetRate
 {
     "Rate": 1.0979
 }
@@ -204,7 +204,7 @@ For these examples, I am using the tool called <a href="https://github.com/fulls
 
 #### Currency.GetRate: `{"Base":"CZK", "Destination":"CAD"}`
 ```bash
-[chutified@localhost currencies]$ grpcurl --plaintext -d '{"Base":"CZK", "Destination":"CAD"}' 127.0.0.1:10502 Currency.GetRate
+[chutommy@localhost currencies]$ grpcurl --plaintext -d '{"Base":"CZK", "Destination":"CAD"}' 127.0.0.1:10502 Currency.GetRate
 {
     "Rate": 0.0596
 }
@@ -221,7 +221,7 @@ For these examples, I am using the tool called <a href="https://github.com/fulls
 ### GetCurrency
 #### Currency.GetCurrency: `{"Name":"USD"}`
 ```bash
-[chutified@localhost currencies]$ grpcurl --plaintext -d '{"Name":"USD"}' 127.0.0.1:10502 Currency.GetCurrency
+[chutommy@localhost currencies]$ grpcurl --plaintext -d '{"Name":"USD"}' 127.0.0.1:10502 Currency.GetCurrency
 {
     "Name": "USD",
     "Country": "United States of America",
@@ -233,7 +233,7 @@ For these examples, I am using the tool called <a href="https://github.com/fulls
 
 #### Currency.GetCurrency: `{"Name":"GBP"}`
 ```bash
-[chutified@localhost currencies]$ grpcurl --plaintext -d '{"Name":"GBP"}' 127.0.0.1:10502 Currency.GetCurrency
+[chutommy@localhost currencies]$ grpcurl --plaintext -d '{"Name":"GBP"}' 127.0.0.1:10502 Currency.GetCurrency
 {
     "Name": "GBP",
     "Country": "England",
@@ -245,7 +245,7 @@ For these examples, I am using the tool called <a href="https://github.com/fulls
 ```
 #### Currency.GetCurrency: `{"Name":"CAD"}`
 ```bash
-[chutified@localhost currencies]$ grpcurl --plaintext -d '{"Name":"CAD"}' 127.0.0.1:10502 Currency.GetCurrency
+[chutommy@localhost currencies]$ grpcurl --plaintext -d '{"Name":"CAD"}' 127.0.0.1:10502 Currency.GetCurrency
 {
     "Name": "CAD",
     "Country": "Canada",
@@ -266,7 +266,7 @@ For these examples, I am using the tool called <a href="https://github.com/fulls
 ### SubscribeCurrency
 #### Currency.SubscribeCurrency: `{"Name":"CAD"}{"Name":"CZK"}{"Name":"GBP"}`
 ```bash
-[chutified@localhost currencies]$ grpcurl --plaintext -d @ 127.0.0.1:10502 Currency.SubscribeCurrency
+[chutommy@localhost currencies]$ grpcurl --plaintext -d @ 127.0.0.1:10502 Currency.SubscribeCurrency
 {"Name":"CAD"}
 {"Name":"CZK"}
 {"Name":"GBP"}
@@ -317,7 +317,7 @@ For these examples, I am using the tool called <a href="https://github.com/fulls
 ### Error handling
 #### Currency.GetRate: `{"Base":"USD", "Destination":"invalid"}`
 ```bash
-[chutified@localhost currencies]$ grpcurl --plaintext -d '{"Base":"USD", "Destination":"invalid"}' 127.0.0.1:10502 Currency.GetRate
+[chutommy@localhost currencies]$ grpcurl --plaintext -d '{"Base":"USD", "Destination":"invalid"}' 127.0.0.1:10502 Currency.GetRate
 ERROR:
     Code: NotFound
     Message: Currency was not found: call GetRate: destination currency 'INVALID' not found.
@@ -325,7 +325,7 @@ ERROR:
 
 #### Currency.GetCurrency: `{"Name":"invalid"}`
 ```bash
-[chutified@localhost currencies]$ grpcurl --plaintext -d '{"Name":"invalid"}' 127.0.0.1:10502 Currency.GetCurrency
+[chutommy@localhost currencies]$ grpcurl --plaintext -d '{"Name":"invalid"}' 127.0.0.1:10502 Currency.GetCurrency
 ERROR:
     Code: NotFound
     Message: Currency "invalid" was not found.
@@ -333,7 +333,7 @@ ERROR:
 
 #### Currency.SubscribeCurrency: `{"Name":"invalid"}`
 ```bash
-[chutified@localhost currencies]$ grpcurl --plaintext -d @ 127.0.0.1:10502 Currency.SubscribeCurrency
+[chutommy@localhost currencies]$ grpcurl --plaintext -d @ 127.0.0.1:10502 Currency.SubscribeCurrency
 {"Name":"invalid"}
 {
     "Error": {
@@ -366,7 +366,7 @@ ERROR:
 ## Client
 All clients can be built with the <a href="https://grpc.io/docs/protoc-installation/" target="_blank">Protocol Buffer Compiler</a> + <a href="https://grpc.io/" target="_blank">gRPC</a> plugin.
 
-*The protobuffer of the services:* <a href="https://github.com/chutified/currencies/blob/master/protos/currency.proto">commodity.proto</a>
+*The protobuffer of the services:* <a href="https://github.com/chutommy/currencies/blob/master/protos/currency.proto">commodity.proto</a>
 
 ## Directory structure
 ```bash

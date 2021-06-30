@@ -7,7 +7,7 @@ import (
 	"testing"
 	"time"
 
-	data "github.com/chutified/currencies/data"
+	data "github.com/chutommy/currencies/data"
 	"gopkg.in/go-playground/assert.v1"
 )
 

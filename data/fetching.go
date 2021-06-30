@@ -7,7 +7,7 @@ import (
 	"time"
 
 	"github.com/PuerkitoBio/goquery"
-	models "github.com/chutified/currencies/models"
+	models "github.com/chutommy/currencies/models"
 )
 
 // record is a cache structure which holds raw source data.

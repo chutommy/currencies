@@ -6,7 +6,7 @@ import (
 	"reflect"
 	"time"
 
-	models "github.com/chutified/currencies/models"
+	models "github.com/chutommy/currencies/models"
 )
 
 // Service defines the data fetched from the website source.

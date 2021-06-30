@@ -6,8 +6,8 @@ import (
 	"log"
 	"testing"
 
-	data "github.com/chutified/currencies/data"
-	currency "github.com/chutified/currencies/protos/currency"
+	data "github.com/chutommy/currencies/data"
+	currency "github.com/chutommy/currencies/protos/currency"
 	"gopkg.in/go-playground/assert.v1"
 )
 

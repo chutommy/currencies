@@ -5,7 +5,7 @@ import (
 	"strings"
 	"time"
 
-	currency "github.com/chutified/currencies/protos/currency"
+	currency "github.com/chutommy/currencies/protos/currency"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 )

@@ -1,4 +1,4 @@
-module github.com/chutified/currencies
+module github.com/chutommy/currencies
 
 go 1.14
 
